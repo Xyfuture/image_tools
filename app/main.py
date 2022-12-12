@@ -9,6 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 from app.redis import conn
 from app.container import dispatcher_list
 import app.routers.inpaint as inpaint
+import app.routers.deblur as deblur
 
 app = fastapi.FastAPI()
 
@@ -34,7 +35,7 @@ app.add_middleware(
 )
 
 app.include_router(inpaint.inpaint_router)
-
+app.include_router(deblur.deblur_router)
 
 @app.get('/result/{image_key}')
 async def get_result(image_key: str):
