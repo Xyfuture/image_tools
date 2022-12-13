@@ -1,4 +1,6 @@
 import asyncio
+
+from loguru import logger
 from pydantic import BaseModel
 import redis.asyncio as redis
 from app.dispatch.trigger import Trigger
@@ -69,6 +71,7 @@ class Dispatcher:
 
     async def wait_worker_response(self):
         await self.init_redis()
+        # logger.info('waiting')
         while True:
             payload = await self.ack_conn.xreadgroup(groupname=self.config.ack_group_name, consumername='master',
                                                      streams={self.config.ack_stream_key: '>'}, block=0, count=1)

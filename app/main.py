@@ -15,7 +15,7 @@ app = fastapi.FastAPI()
 
 
 @app.on_event('startup')
-async def register_dispatcher_listener():
+def register_dispatcher_listener():
     for dispatcher in dispatcher_list:
         asyncio.create_task(dispatcher.wait_worker_response())
 

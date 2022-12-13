@@ -26,6 +26,8 @@ dispatcher_list.append(inpaint_dispatcher)
 async def get_inpaint_image_mask(origin:UploadFile,mask:UploadFile):
     payload = {'image':pickle.dumps(origin.file.read()),'mask':pickle.dumps(mask.file.read())}
     result_url = await inpaint_dispatcher.dispatch(payload)
+    if result_url == '/result/error':
+        return {"status":0,'error':'inference failed'}
     return {"image_url":"http://localhost:5003"+result_url}
 
 
