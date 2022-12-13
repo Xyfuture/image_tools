@@ -17,7 +17,6 @@ app = fastapi.FastAPI()
 @app.on_event('startup')
 async def register_dispatcher_listener():
     for dispatcher in dispatcher_list:
-        # asyncio.create_task(dispatcher.init_redis())
         asyncio.create_task(dispatcher.wait_worker_response())
 
 origins= [
@@ -40,6 +39,8 @@ app.include_router(deblur.deblur_router)
 
 @app.get('/result/{image_key}')
 async def get_result(image_key: str):
+    if image_key == 'error':
+        return StreamingResponse(open('app/statics/failed.jpg','rb'),media_type='image/jpeg')
     img_byte = await conn.get(image_key)
     if img_byte:
         img_byte = pickle.loads(img_byte)

@@ -72,9 +72,12 @@ class Dispatcher:
         while True:
             payload = await self.ack_conn.xreadgroup(groupname=self.config.ack_group_name, consumername='master',
                                                      streams={self.config.ack_stream_key: '>'}, block=0, count=1)
-            tag, result = payload[0][1][0][1][b'tag'], payload[0][1][0][1][b'result']
-            result_url = await self.add_result_to_buffer(tag, result)
-            await self.trigger.set(tag, result_url)
+            tag,status, result = payload[0][1][0][1][b'tag'],payload[0][1][0][1][b'status'],payload[0][1][0][1][b'result']
+            if status == b'ok':
+                result_url = await self.add_result_to_buffer(tag, result)
+                await self.trigger.set(tag, result_url)
+            else :
+                await self.trigger.set(tag,'/result/error')
 
     async def add_result_to_buffer(self, key, value):
         if isinstance(key, bytes):

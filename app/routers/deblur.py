@@ -5,11 +5,21 @@ from loguru import logger
 import redis.asyncio as redis
 from fastapi import APIRouter, FastAPI, File, UploadFile
 from app.redis import conn
-from app.dispatch.dispatcher import Dispatcher
+from app.dispatch.dispatcher import Dispatcher, DispatcherConfig
 from app.container import dispatcher_list
 
+
+deblur_dispatcher_config = DispatcherConfig(
+    worker_name = "Deblur",
+    worker_stream_key= "Deblur_worker",
+    worker_group_name = "worker",
+    ack_stream_key = "Deblur_finish_ack",
+    ack_group_name = "master"
+)
+
+
 deblur_router = APIRouter()
-deblur_dispatcher = Dispatcher(conn, conn, conn)
+deblur_dispatcher = Dispatcher(conn, conn, conn,deblur_dispatcher_config)
 dispatcher_list.append(deblur_dispatcher)
 
 
