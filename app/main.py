@@ -37,6 +37,7 @@ app.add_middleware(
 app.include_router(inpaint.inpaint_router)
 app.include_router(deblur.deblur_router)
 
+
 @app.get('/result/{image_key}')
 async def get_result(image_key: str):
     img_byte = await conn.get(image_key)
