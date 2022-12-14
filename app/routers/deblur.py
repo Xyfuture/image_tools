@@ -27,4 +27,7 @@ dispatcher_list.append(deblur_dispatcher)
 async def get_deblur_origin_image(origin: UploadFile):
     payload = {'image': pickle.dumps(origin.file.read())}
     result_url = await deblur_dispatcher.dispatch(payload)
-    return {"image_url": "http://localhost:5003" + result_url}
+    if result_url == '/result/error':
+        return {"status": 0, 'error': 'inference failed'}
+    # return {"image_url": "http://localhost:5003" + result_url}
+    return {'image_url':result_url}
